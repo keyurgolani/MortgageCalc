@@ -3,10 +3,12 @@ package com.example.android.mortgagecalc;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TabHost;
 import android.widget.Toast;
 
@@ -20,12 +22,22 @@ public class CalcFragment extends Fragment implements SimpleGestureFilter.Simple
 
     TabHost mDetailsTab;
     private SimpleGestureFilter detector;
+    Button mSaveButton;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.calc_layout, container, false);
         mDetailsTab = (TabHost) rootView.findViewById(R.id.details_tab);
+        mSaveButton = (Button) rootView.findViewById(R.id.save_button);
+
+        mSaveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: Do a lot of validation and Save The Mortgage
+            }
+        });
+
         mDetailsTab.setup();
 
         TabHost.TabSpec spec = mDetailsTab.newTabSpec("Loan Info");
@@ -54,17 +66,21 @@ public class CalcFragment extends Fragment implements SimpleGestureFilter.Simple
 
         switch (direction) {
 
-            case SimpleGestureFilter.SWIPE_RIGHT : str = "Swipe Right";
+            case SimpleGestureFilter.SWIPE_RIGHT :
+                if(mDetailsTab.getCurrentTab() == 1) {
+                    mDetailsTab.setCurrentTab(0);
+                }
                 break;
-            case SimpleGestureFilter.SWIPE_LEFT :  str = "Swipe Left";
+            case SimpleGestureFilter.SWIPE_LEFT :
+                if(mDetailsTab.getCurrentTab() == 0) {
+                    mDetailsTab.setCurrentTab(1);
+                }
                 break;
-            case SimpleGestureFilter.SWIPE_DOWN :  str = "Swipe Down";
+            case SimpleGestureFilter.SWIPE_DOWN :
                 break;
-            case SimpleGestureFilter.SWIPE_UP :    str = "Swipe Up";
+            case SimpleGestureFilter.SWIPE_UP :
                 break;
-
         }
-        Toast.makeText(this.getActivity(), str, Toast.LENGTH_SHORT).show();
     }
 
     @Override
