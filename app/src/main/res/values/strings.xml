@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MortgageCalc</string>
+    <string name="title_calc">Calculate</string>
+    <string name="title_my_mort">My Mortgages</string>
+</resources>
