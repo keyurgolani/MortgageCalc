@@ -39,11 +39,11 @@ public class MainActivity extends AppCompatActivity {
 
     };
 
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent me){
-        ((CalcFragment) fm.findFragmentByTag("active")).dispatchTouchEvent(me);
-        return super.dispatchTouchEvent(me);
-    }
+//    @Override
+//    public boolean dispatchTouchEvent(MotionEvent me){
+//        ((CalcFragment) fm.findFragmentByTag("active")).dispatchTouchEvent(me);
+//        return super.dispatchTouchEvent(me);
+//    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

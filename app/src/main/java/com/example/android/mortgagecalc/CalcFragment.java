@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -12,16 +13,17 @@ import android.widget.Button;
 import android.widget.TabHost;
 import android.widget.Toast;
 
+import com.example.android.utility.MyGestureDetector;
 import com.example.android.utility.SimpleGestureFilter;
 
 /**
  * Created by keyurgolani on 3/16/17.
  */
 
-public class CalcFragment extends Fragment implements SimpleGestureFilter.SimpleGestureListener{
+public class CalcFragment extends Fragment /*implements SimpleGestureFilter.SimpleGestureListener*/{
 
     TabHost mDetailsTab;
-    private SimpleGestureFilter detector;
+//    private SimpleGestureFilter detector;
     Button mSaveButton;
 
     @Nullable
@@ -40,6 +42,9 @@ public class CalcFragment extends Fragment implements SimpleGestureFilter.Simple
 
         mDetailsTab.setup();
 
+        final GestureDetector gestureDetector;
+        gestureDetector = new GestureDetector(new MyGestureDetector(mDetailsTab, this));
+
         TabHost.TabSpec spec = mDetailsTab.newTabSpec("Loan Info");
         spec.setContent(R.id.loan_tab);
         spec.setIndicator("Loan Info");
@@ -49,42 +54,52 @@ public class CalcFragment extends Fragment implements SimpleGestureFilter.Simple
         spec.setContent(R.id.property_tab);
         spec.setIndicator("Property Info");
         mDetailsTab.addTab(spec);
+        mDetailsTab.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if(gestureDetector.onTouchEvent(event)) {
+                    return false;
+                } else {
+                    return true;
+                }
+            }
+        });
 
-        detector = new SimpleGestureFilter(this.getActivity(),this);
+//        detector = new SimpleGestureFilter(this.getActivity(),this);
 
         return rootView;
     }
 
-    public void dispatchTouchEvent(MotionEvent me){
-        // Call onTouchEvent of SimpleGestureFilter class
-        this.detector.onTouchEvent(me);
-    }
+//    public void dispatchTouchEvent(MotionEvent me){
+//        // Call onTouchEvent of SimpleGestureFilter class
+//        this.detector.onTouchEvent(me);
+//    }
 
-    @Override
-    public void onSwipe(int direction) {
-        String str = "";
-
-        switch (direction) {
-
-            case SimpleGestureFilter.SWIPE_RIGHT :
-                if(mDetailsTab.getCurrentTab() == 1) {
-                    mDetailsTab.setCurrentTab(0);
-                }
-                break;
-            case SimpleGestureFilter.SWIPE_LEFT :
-                if(mDetailsTab.getCurrentTab() == 0) {
-                    mDetailsTab.setCurrentTab(1);
-                }
-                break;
-            case SimpleGestureFilter.SWIPE_DOWN :
-                break;
-            case SimpleGestureFilter.SWIPE_UP :
-                break;
-        }
-    }
-
-    @Override
-    public void onDoubleTap() {
-        Toast.makeText(this.getActivity(), "Double Tap", Toast.LENGTH_SHORT).show();
-    }
+//    @Override
+//    public void onSwipe(int direction) {
+//        String str = "";
+//
+//        switch (direction) {
+//
+//            case SimpleGestureFilter.SWIPE_RIGHT :
+//                if(mDetailsTab.getCurrentTab() == 1) {
+//                    mDetailsTab.setCurrentTab(0);
+//                }
+//                break;
+//            case SimpleGestureFilter.SWIPE_LEFT :
+//                if(mDetailsTab.getCurrentTab() == 0) {
+//                    mDetailsTab.setCurrentTab(1);
+//                }
+//                break;
+//            case SimpleGestureFilter.SWIPE_DOWN :
+//                break;
+//            case SimpleGestureFilter.SWIPE_UP :
+//                break;
+//        }
+//    }
+//
+//    @Override
+//    public void onDoubleTap() {
+//        // Do Nothing
+//    }
 }

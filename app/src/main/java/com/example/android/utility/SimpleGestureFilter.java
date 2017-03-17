@@ -1,6 +1,7 @@
 package com.example.android.utility;
 
 import android.app.Activity;
+import android.graphics.Point;
 import android.view.GestureDetector;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
@@ -38,6 +39,12 @@ public class SimpleGestureFilter extends SimpleOnGestureListener {
         this.context = context;
         this.detector = new GestureDetector(context, this);
         this.listener = sgl;
+        Point size = new Point();
+        context.getWindowManager().getDefaultDisplay().getSize(size);
+        int width = size.x;
+        int height = size.y;
+        swipe_Min_Distance = width / 4;
+        swipe_Max_Distance = width;
     }
 
     public void onTouchEvent(MotionEvent event){
