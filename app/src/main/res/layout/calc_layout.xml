@@ -158,6 +158,7 @@
 
 
                         <RadioGroup xmlns:android="http://schemas.android.com/apk/res/android"
+                            android:id= "@+id/type_group"
                             android:layout_width="match_parent"
                             android:layout_height="0dp"
                             android:layout_weight="0.1"
@@ -247,7 +248,7 @@
 
 
                     <Spinner
-                        android:id="@+id/spinner1"
+                        android:id="@+id/state_spinner"
                         android:layout_width="match_parent"
                         android:layout_height="0dp"
                         android:layout_weight="0.2"

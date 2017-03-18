@@ -19,11 +19,16 @@ public class MortDialog extends DialogFragment {
                 .setPositiveButton(R.string.edit_button, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User chose to edit the mortgage details
+
+
                     }
                 })
                 .setNegativeButton(R.string.delete_button, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User chose to delete the mortgage details
+
+
+
                     }
                 });
         // Create the AlertDialog object and return it
