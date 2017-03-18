@@ -61,15 +61,15 @@ public class CalcFragment extends Fragment {
         Mortgage new_mort = new Mortgage();
         new_mort.setInterest(Double.parseDouble(mAPREditView.getText().toString()));
         new_mort.setDownpayment(Double.parseDouble(mDownPaymentEditView.getText().toString()));
-        new_mort.setPeriod(Integer.parseInt(mPeriodEditView.toString()));
+        new_mort.setPeriod(Integer.parseInt(mPeriodEditView.getText().toString()));
         new_mort.setPrice(Double.parseDouble(mPropertyPriceEditView.getText().toString()));
-        new_mort.setMonthlypayment(Double.parseDouble(mResultTextView.getText().toString()));
+//        new_mort.setMonthlypayment(Double.parseDouble(mResultTextView.getText().toString()));
 
-        new_mort.setStreet(mStreet.toString());
-        new_mort.setCity(mCity.toString());
+        new_mort.setStreet(mStreet.getText().toString());
+        new_mort.setCity(mCity.getText().toString());
         new_mort.setState(mState);
         new_mort.setType(mType);
-        new_mort.setZip(Integer.parseInt(mZip.toString()));
+        new_mort.setZip(Integer.parseInt(mZip.getText().toString()));
 
         new_mort.toString();
 
@@ -121,13 +121,39 @@ public class CalcFragment extends Fragment {
 
        RadioGroup rg = (RadioGroup) rootView.findViewById(R.id.type_group);
         rg.check(R.id.house_type);
+
         rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
         {
+            @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-
-                Toast.makeText(getContext(), "radio selected", Toast.LENGTH_SHORT).show();
+                // checkedId is the RadioButton selected
             }
+
+            public void onRadioButtonClicked(View view) {
+                // Is the button now checked?
+                boolean checked = ((RadioButton) view).isChecked();
+
+                // Check which radio button was clicked
+                switch(view.getId()) {
+                    case R.id.house_type:
+                        if (checked)
+                            mType = "House";
+                        break;
+                    case R.id.townhouse_type:
+                        if (checked)
+                            mType = "TownHouse";
+                        break;
+                    case R.id.condo_type:
+                        if (checked)
+                            mType = "Condo";
+                        break;
+                }
+            }
+
         });
+
+
+
         mType = ((RadioButton)rootView.findViewById(rg.getCheckedRadioButtonId() )).getText().toString();
         mHouseButton = (RadioButton)rootView.findViewById(R.id.house_type);
         mTownHouse = (RadioButton)rootView.findViewById(R.id.townhouse_type);
@@ -250,4 +276,6 @@ public class CalcFragment extends Fragment {
 
         return rootView;
     }
+
+
 }
