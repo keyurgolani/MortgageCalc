@@ -11,7 +11,10 @@ import android.os.Bundle;
  */
 
 public class MortDialog extends DialogFragment {
-    @Override
+    int mort_id;
+
+
+        @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());

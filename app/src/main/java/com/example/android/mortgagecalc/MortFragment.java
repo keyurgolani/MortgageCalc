@@ -1,7 +1,10 @@
 package com.example.android.mortgagecalc;
 
 import android.Manifest;
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -45,10 +48,12 @@ public class MortFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.mort_layout, container, false);
         mMortgageList = (ListView) rootView.findViewById(R.id.mortgage_list);
-        List<Mortgage> mortgages = new MortgageDAO(this.getActivity()).getAllMortgages();
-        List<String> mortgages_list = new ArrayList<>();
+        final List<Mortgage> mortgages = new MortgageDAO(this.getActivity()).getAllMortgages();
+        final List<String> mortgages_list = new ArrayList<>();
+        final List<Long> mortgages_id_list = new ArrayList<>();
         for (int i = 0; i < mortgages.size(); i++) {
             mortgages_list.add(mortgages.get(i).getAddress());
+
         }
         adapter = new ArrayAdapter<String>(this.getActivity(),
                 android.R.layout.simple_list_item_1,
@@ -63,11 +68,47 @@ public class MortFragment extends Fragment {
 
                 int itemPosition = position;
                 String itemValue = (String) mMortgageList.getItemAtPosition(position);
+                Mortgage current_mortgage = mortgages.get(position);
+
+
 
                 // Show Alert
                 Toast.makeText(getActivity().getApplicationContext(),
                         "Position :" + itemPosition + "  ListItem : " + itemValue, Toast.LENGTH_LONG)
                         .show();
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                builder.setTitle("Mortgage Details");
+                builder.setMessage("\nType:"+"\t"+current_mortgage.getType() +
+                        "\nStreet Address:"+"\t"+current_mortgage.getAddress() +
+                        "\nCity:"+"\t"+current_mortgage.getCity() +
+                        "\nLoan Amount:"+"\t"+(current_mortgage.getPrice()-current_mortgage.getDownpayment()) +
+                        "\nAPR:"+"\t"+current_mortgage.getInterest() +
+                        "\nMonthly Payment:"+"\t" + current_mortgage.getMortgageAmount()
+                );
+
+                builder.setPositiveButton("EDIT", new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Do nothing but close the dialog
+                        dialog.dismiss();
+
+                    }
+                });
+
+                builder.setNegativeButton("DELETE", new DialogInterface.OnClickListener() {
+
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Do nothing
+                        dialog.dismiss();
+                    }
+                });
+
+                AlertDialog alert = builder.create();
+                alert.show();
+
 
             }
 
