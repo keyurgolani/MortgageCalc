@@ -79,14 +79,16 @@ public class MortFragment extends Fragment {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-                builder.setTitle("Mortgage Details");
-                builder.setMessage("\nType:"+"\t"+current_mortgage.getType() +
+                String msg = "\nType:"+"\t"+current_mortgage.getType() +
                         "\nStreet Address:"+"\t"+current_mortgage.getAddress() +
                         "\nCity:"+"\t"+current_mortgage.getCity() +
                         "\nLoan Amount:"+"\t"+(current_mortgage.getPrice()-current_mortgage.getDownpayment()) +
                         "\nAPR:"+"\t"+current_mortgage.getInterest() +
-                        "\nMonthly Payment:"+"\t" + current_mortgage.getMortgageAmount()
-                );
+                        "\nMonthly Payment:"+"\t" + current_mortgage.getMortgageAmount();
+
+
+                builder.setTitle("Mortgage Details");
+                builder.setMessage(msg);
 
                 builder.setPositiveButton("EDIT", new DialogInterface.OnClickListener() {
 
