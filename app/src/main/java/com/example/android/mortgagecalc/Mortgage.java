@@ -7,126 +7,108 @@ package com.example.android.mortgagecalc;
 public class Mortgage {
 
     private long id = 0;
-    private String type ="";
-    private String street = "";
+    private int type =0;
+    private String address = "";
     private String city = "";
     private String state = "";
     private int zip = 0;
     private double latitude = 0.0;
     private double longitude = 0.0;
-
-
     private int period = 0;
     private double downpayment = 0.0;
     private double interest = 0.0;
     private double price = 0.0;
-    private double monthlypayment = 0.0;
-
-
 
     public long getId() {
         return id;
     }
 
-    public double getMonthlypayment(){
-        return monthlypayment;
+    public void setId(long id) {
+        this.id = id;
     }
 
-    public String getType(){
+    public int getType() {
         return type;
     }
 
-    public int getZip(){
-        return zip;
-    }
-    public String getStreet(){
-        return street;
+    public void setType(int type) {
+        this.type = type;
     }
 
-    public String getCity(){
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getCity() {
         return city;
     }
 
-    public String getState(){
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
         return state;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public int getZip() {
+        return zip;
+    }
+
+    public void setZip(int zip) {
+        this.zip = zip;
     }
 
     public double getLatitude() {
         return latitude;
     }
 
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public int getPeriod() {
-        return period;
-    }
-
-    public double getDownpayment() {
-        return downpayment;
-    }
-
-    public double getInterest() {
-        return interest;
-    }
-
-    public double getPrice() {
-        return price;
-    }
-
-
-    //SETTER
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public void setMonthlypayment(double xmonthly){
-        this.monthlypayment = xmonthly;
-    }
-
-    public void setType(String xtype){
-        this.type = xtype;
-
-    }
-
-    public void setZip(int xzip){
-        this.zip = xzip;
-    }
-
-    public void setStreet(String xstreet){
-        this.street = xstreet;
-    }
-
-    public void setCity(String xcity){
-        this.city = xcity;
-    }
-
-
-
-    public void setState(String xstate){
-        this.state = xstate;
-    }
-
     public void setLatitude(double latitude) {
         this.latitude = latitude;
+    }
+
+    public double getLongitude() {
+        return longitude;
     }
 
     public void setLongitude(double longitude) {
         this.longitude = longitude;
     }
 
+    public int getPeriod() {
+        return period;
+    }
+
     public void setPeriod(int period) {
         this.period = period;
+    }
+
+    public double getDownpayment() {
+        return downpayment;
     }
 
     public void setDownpayment(double downpayment) {
         this.downpayment = downpayment;
     }
 
+    public double getInterest() {
+        return interest;
+    }
+
     public void setInterest(double interest) {
         this.interest = interest;
+    }
+
+    public double getPrice() {
+        return price;
     }
 
     public void setPrice(double price) {
@@ -139,7 +121,7 @@ public class Mortgage {
 
     @Override
     public String toString() {
-        return "Street: " + street +
+        return "Street: " + address +
                 "\nCity: " + city +
                 "\nState: " + state +
                 "\nZip: " + zip +
@@ -149,7 +131,6 @@ public class Mortgage {
                 "\nPeriod: " + period +
                 "\nDownPayment: " + downpayment +
                 "\nInterest: " + interest +
-                "\nPrice: " + price +
-                "\nEMI: " + monthlypayment;
+                "\nPrice: " + price;
     }
 }

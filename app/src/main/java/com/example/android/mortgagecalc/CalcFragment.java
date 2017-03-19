@@ -2,13 +2,10 @@ package com.example.android.mortgagecalc;
 
 import android.app.Fragment;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
@@ -20,14 +17,10 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.utility.MyGestureDetector;
-import com.example.android.utility.SimpleGestureFilter;
 
 import me.grantland.widget.AutofitHelper;
-
-import static android.R.attr.value;
 
 /**
  * Created by keyurgolani on 3/16/17.
@@ -43,39 +36,25 @@ public class CalcFragment extends Fragment {
     EditText mDownPaymentEditView;
     EditText mAPREditView;
     EditText mPeriodEditView;
-
     EditText mStreet;
     EditText mCity;
-    String mState;
+    Spinner mState;
     EditText mZip;
-    String mType;
-    RadioButton mHouseButton;
-    RadioButton mTownHouse;
-    RadioButton mCondo;
-
-
-
+    RadioGroup mHouseTypeGroup;
 
     public void SaveMortgage(){
+        Mortgage mortgage = new Mortgage();
+        mortgage.setInterest(Double.parseDouble(mAPREditView.getText().toString()));
+        mortgage.setDownpayment(Double.parseDouble(mDownPaymentEditView.getText().toString()));
+        mortgage.setPeriod(Integer.parseInt(mPeriodEditView.getText().toString()));
+        mortgage.setPrice(Double.parseDouble(mPropertyPriceEditView.getText().toString()));
+        mortgage.setAddress(mStreet.getText().toString());
+        mortgage.setCity(mCity.getText().toString());
+        mortgage.setState(mState.getSelectedItem().toString());
+        mortgage.setType(mHouseTypeGroup.getCheckedRadioButtonId());
+        mortgage.setZip(Integer.parseInt(mZip.getText().toString()));
 
-        Mortgage new_mort = new Mortgage();
-        new_mort.setInterest(Double.parseDouble(mAPREditView.getText().toString()));
-        new_mort.setDownpayment(Double.parseDouble(mDownPaymentEditView.getText().toString()));
-        new_mort.setPeriod(Integer.parseInt(mPeriodEditView.getText().toString()));
-        new_mort.setPrice(Double.parseDouble(mPropertyPriceEditView.getText().toString()));
-//        new_mort.setMonthlypayment(Double.parseDouble(mResultTextView.getText().toString()));
-
-        new_mort.setStreet(mStreet.getText().toString());
-        new_mort.setCity(mCity.getText().toString());
-        new_mort.setState(mState);
-        new_mort.setType(mType);
-        new_mort.setZip(Integer.parseInt(mZip.getText().toString()));
-
-        new_mort.toString();
-
-
-
-
+        new MortgageDAO(this.getActivity()).createMortgage(mortgage);
 
     }
 
@@ -109,55 +88,11 @@ public class CalcFragment extends Fragment {
         mDownPaymentEditView = (EditText) rootView.findViewById(R.id.downpayment_value);
         mAPREditView = (EditText) rootView.findViewById(R.id.apr_value);
         mPeriodEditView = (EditText) rootView.findViewById(R.id.period_value);
-
         mStreet = (EditText)rootView.findViewById(R.id.street_value);
         mCity = (EditText) rootView.findViewById(R.id.city_value);
-
-        Spinner mySpinner=(Spinner) rootView.findViewById(R.id.state_spinner);
-        mState = mySpinner.getSelectedItem().toString();
-
-
+        mState = (Spinner) rootView.findViewById(R.id.state_spinner);
         mZip = (EditText) rootView.findViewById(R.id.zip_value);
-
-       RadioGroup rg = (RadioGroup) rootView.findViewById(R.id.type_group);
-        rg.check(R.id.house_type);
-
-        rg.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener()
-        {
-            @Override
-            public void onCheckedChanged(RadioGroup group, int checkedId) {
-                // checkedId is the RadioButton selected
-            }
-
-            public void onRadioButtonClicked(View view) {
-                // Is the button now checked?
-                boolean checked = ((RadioButton) view).isChecked();
-
-                // Check which radio button was clicked
-                switch(view.getId()) {
-                    case R.id.house_type:
-                        if (checked)
-                            mType = "House";
-                        break;
-                    case R.id.townhouse_type:
-                        if (checked)
-                            mType = "TownHouse";
-                        break;
-                    case R.id.condo_type:
-                        if (checked)
-                            mType = "Condo";
-                        break;
-                }
-            }
-
-        });
-
-
-
-        mType = ((RadioButton)rootView.findViewById(rg.getCheckedRadioButtonId() )).getText().toString();
-        mHouseButton = (RadioButton)rootView.findViewById(R.id.house_type);
-        mTownHouse = (RadioButton)rootView.findViewById(R.id.townhouse_type);
-        mCondo = (RadioButton)rootView.findViewById(R.id.condo_type);
+        mHouseTypeGroup = (RadioGroup) rootView.findViewById(R.id.type_group);
 
 
         AutofitHelper.create(mResultTextView);
