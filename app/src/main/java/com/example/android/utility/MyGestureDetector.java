@@ -16,7 +16,7 @@ public class MyGestureDetector extends GestureDetector.SimpleOnGestureListener{
 
     private static int SWIPE_MIN_DISTANCE;
     private static int SWIPE_MAX_OFF_PATH;
-    private static int SWIPE_THRESHOLD_VELOCITY = 200;
+    private static int SWIPE_THRESHOLD_VELOCITY = 10;
 
     TabHost mDetailsTab;
 

@@ -36,6 +36,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-maps:10.2.0'
     compile 'com.google.android.gms:play-services-places:10.2.0'
     compile 'com.lantouzi.wheelview:library:1.1.2'
-
-
+    compile 'com.loopj.android:android-async-http:1.4.9'
 }

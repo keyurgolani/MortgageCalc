@@ -1,5 +1,17 @@
 package com.example.android.mortgagecalc;
 
+import android.util.Log;
+
+import com.example.android.utility.HttpUtils;
+import com.loopj.android.http.JsonHttpResponseHandler;
+import com.loopj.android.http.RequestParams;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import cz.msebera.android.httpclient.Header;
+
 /**
  * Created by Rushin Naik on 3/17/2017.
  */
@@ -18,6 +30,7 @@ public class Mortgage {
     private double downpayment = 0.0;
     private double interest = 0.0;
     private double price = 0.0;
+    private boolean isValid = true;
 
     public long getId() {
         return id;
@@ -115,8 +128,47 @@ public class Mortgage {
         this.price = price;
     }
 
+    public boolean isValid() {
+        return isValid;
+    }
+
+    public void setValid(boolean valid) {
+        isValid = valid;
+    }
+
     public double getMortgageAmount() {
-        return price * (interest / 12) * Math.pow(1 + (interest / 12), (period * 12) / (Math.pow(1 + (interest / 12), (period * 12)) - 1));
+        return (price - downpayment) * (interest / 12) * Math.pow(1 + (interest / 12), (period * 12) / (Math.pow(1 + (interest / 12), (period * 12)) - 1));
+    }
+
+    public void validate() {
+        RequestParams rp = new RequestParams();
+        rp.add("address", address + ", " + city + ", " + state + " " + zip);
+        rp.add("sensor", "false");
+
+        HttpUtils.post(HttpUtils.getAbsoluteUrl(""), rp, new JsonHttpResponseHandler() {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, JSONObject response) {
+                try {
+                    JSONObject serverResp = new JSONObject(response.toString());
+                    if(serverResp.getString("status").equalsIgnoreCase("OK")) {
+                        latitude = serverResp.getJSONArray("results")
+                                .getJSONObject(0)
+                                .getJSONObject("geometry")
+                                .getJSONObject("location")
+                                .getDouble("lat");
+
+                        longitude = serverResp.getJSONArray("results")
+                                .getJSONObject(0)
+                                .getJSONObject("geometry")
+                                .getJSONObject("location")
+                                .getDouble("lng");
+                        isValid = true;
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     @Override

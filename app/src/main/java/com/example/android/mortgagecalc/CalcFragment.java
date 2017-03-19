@@ -17,6 +17,7 @@ import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.android.utility.MyGestureDetector;
 
@@ -42,7 +43,7 @@ public class CalcFragment extends Fragment {
     EditText mZip;
     RadioGroup mHouseTypeGroup;
 
-    public void SaveMortgage(){
+    public void SaveMortgage() {
         Mortgage mortgage = new Mortgage();
         mortgage.setInterest(Double.parseDouble(mAPREditView.getText().toString()));
         mortgage.setDownpayment(Double.parseDouble(mDownPaymentEditView.getText().toString()));
@@ -53,9 +54,14 @@ public class CalcFragment extends Fragment {
         mortgage.setState(mState.getSelectedItem().toString());
         mortgage.setType(mHouseTypeGroup.getCheckedRadioButtonId());
         mortgage.setZip(Integer.parseInt(mZip.getText().toString()));
-
-        new MortgageDAO(this.getActivity()).createMortgage(mortgage);
-
+        mortgage.validate();
+        if(mortgage.isValid()) {
+            new MortgageDAO(this.getActivity()).createMortgage(mortgage);
+        } else {
+            Toast.makeText(getActivity().getApplicationContext(),
+                    "Please make sure to provide valid address!", Toast.LENGTH_LONG)
+                    .show();
+        }
     }
 
     public void calculateMortgage() {
