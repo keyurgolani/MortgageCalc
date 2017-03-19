@@ -152,4 +152,23 @@ public class MortgageDAO {
         mortgage.setPrice(cursor.getDouble(11));
         return mortgage;
     }
+
+    public void updateMortgage(Mortgage mortgage) {
+        open();
+        String strFilter = SQLHandler.COLUMN_ID + "=" + mortgage.getId();
+        ContentValues values = new ContentValues();
+        values.put(SQLHandler.COLUMN_ADDRESS, mortgage.getAddress());
+        values.put(SQLHandler.COLUMN_TYPE, mortgage.getType());
+        values.put(SQLHandler.COLUMN_CITY, mortgage.getCity());
+        values.put(SQLHandler.COLUMN_STATE, mortgage.getState());
+        values.put(SQLHandler.COLUMN_ZIP, mortgage.getZip());
+        values.put(SQLHandler.COLUMN_LATITUDE, mortgage.getLatitude());
+        values.put(SQLHandler.COLUMN_LONGITUDE, mortgage.getLongitude());
+        values.put(SQLHandler.COLUMN_PERIOD, mortgage.getPeriod());
+        values.put(SQLHandler.COLUMN_DOWNPAYMENT, mortgage.getDownpayment());
+        values.put(SQLHandler.COLUMN_INTEREST, mortgage.getInterest());
+        values.put(SQLHandler.COLUMN_PRICE, mortgage.getPrice());
+        database.update(SQLHandler.TABLE_MORTGAGES, values, strFilter, null);
+        close();
+    }
 }

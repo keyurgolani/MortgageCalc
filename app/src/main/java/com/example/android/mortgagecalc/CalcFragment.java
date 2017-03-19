@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -42,25 +43,37 @@ public class CalcFragment extends Fragment {
     Spinner mState;
     EditText mZip;
     RadioGroup mHouseTypeGroup;
+    Mortgage editMortgage = null;
 
     public void SaveMortgage() {
-        Mortgage mortgage = new Mortgage();
-        mortgage.setInterest(Double.parseDouble(mAPREditView.getText().toString()));
-        mortgage.setDownpayment(Double.parseDouble(mDownPaymentEditView.getText().toString()));
-        mortgage.setPeriod(Integer.parseInt(mPeriodEditView.getText().toString()));
-        mortgage.setPrice(Double.parseDouble(mPropertyPriceEditView.getText().toString()));
-        mortgage.setAddress(mStreet.getText().toString());
-        mortgage.setCity(mCity.getText().toString());
-        mortgage.setState(mState.getSelectedItem().toString());
-        mortgage.setType(mHouseTypeGroup.getCheckedRadioButtonId());
-        mortgage.setZip(Integer.parseInt(mZip.getText().toString()));
-        mortgage.validate();
-        if(mortgage.isValid()) {
-            new MortgageDAO(this.getActivity()).createMortgage(mortgage);
+        if(editMortgage == null) {
+            Mortgage mortgage = new Mortgage();
+            mortgage.setInterest(Double.parseDouble(mAPREditView.getText().toString()));
+            mortgage.setDownpayment(Double.parseDouble(mDownPaymentEditView.getText().toString()));
+            mortgage.setPeriod(Integer.parseInt(mPeriodEditView.getText().toString()));
+            mortgage.setPrice(Double.parseDouble(mPropertyPriceEditView.getText().toString()));
+            mortgage.setAddress(mStreet.getText().toString());
+            mortgage.setCity(mCity.getText().toString());
+            mortgage.setState(mState.getSelectedItem().toString());
+            mortgage.setType(mHouseTypeGroup.getCheckedRadioButtonId());
+            mortgage.setZip(Integer.parseInt(mZip.getText().toString()));
+            mortgage.validate();
+            if(mortgage.isValid()) {
+                new MortgageDAO(this.getActivity()).createMortgage(mortgage);
+            } else {
+                Toast.makeText(getActivity().getApplicationContext(),
+                        "Please make sure to provide valid address!", Toast.LENGTH_LONG)
+                        .show();
+            }
         } else {
-            Toast.makeText(getActivity().getApplicationContext(),
-                    "Please make sure to provide valid address!", Toast.LENGTH_LONG)
-                    .show();
+            editMortgage.validate();
+            if(editMortgage.isValid()) {
+                new MortgageDAO(this.getActivity()).updateMortgage(editMortgage);
+            } else {
+                Toast.makeText(getActivity().getApplicationContext(),
+                        "Please make sure to provide valid address!", Toast.LENGTH_LONG)
+                        .show();
+            }
         }
     }
 
@@ -99,6 +112,21 @@ public class CalcFragment extends Fragment {
         mState = (Spinner) rootView.findViewById(R.id.state_spinner);
         mZip = (EditText) rootView.findViewById(R.id.zip_value);
         mHouseTypeGroup = (RadioGroup) rootView.findViewById(R.id.type_group);
+
+        Bundle args = getArguments();
+        if(args != null) {
+            editMortgage = (Mortgage) getArguments().getSerializable("mortgage");
+            mPropertyPriceEditView.setText(editMortgage.getPrice()+"");
+            mDownPaymentEditView.setText(editMortgage.getDownpayment()+"");
+            mAPREditView.setText(editMortgage.getInterest()+"");
+            mPeriodEditView.setText(editMortgage.getPeriod()+"");
+            mStreet.setText(editMortgage.getAddress());
+            mCity.setText(editMortgage.getCity()+"");
+//            mState.setSelection(Integer.parseInt(editMortgage.getState()));
+            mZip.setText(editMortgage.getZip()+"");
+            mHouseTypeGroup.check(editMortgage.getType());
+            mResultTextView.setText(editMortgage.getInterest()+"");
+        }
 
 
         AutofitHelper.create(mResultTextView);
