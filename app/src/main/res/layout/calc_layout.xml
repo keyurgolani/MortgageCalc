@@ -242,7 +242,6 @@
                                 android:layout_centerVertical="true"
                                 android:ems="10"
                                 android:hint="Zip Code"
-                                android:inputType="numberDecimal"
                                 android:textSize="30sp"/>
 
                         </android.support.design.widget.TextInputLayout>
