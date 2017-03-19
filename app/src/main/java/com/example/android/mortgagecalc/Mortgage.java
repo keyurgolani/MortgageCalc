@@ -10,13 +10,15 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
+
 import cz.msebera.android.httpclient.Header;
 
 /**
  * Created by Rushin Naik on 3/17/2017.
  */
 
-public class Mortgage {
+public class Mortgage implements Serializable {
 
     private long id = 0;
     private int type =0;

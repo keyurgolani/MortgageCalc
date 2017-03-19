@@ -3,6 +3,7 @@ package com.example.android.mortgagecalc;
 import android.Manifest;
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -68,14 +69,7 @@ public class MortFragment extends Fragment {
 
                 int itemPosition = position;
                 String itemValue = (String) mMortgageList.getItemAtPosition(position);
-                Mortgage current_mortgage = mortgages.get(position);
-
-
-
-                // Show Alert
-                Toast.makeText(getActivity().getApplicationContext(),
-                        "Position :" + itemPosition + "  ListItem : " + itemValue, Toast.LENGTH_LONG)
-                        .show();
+                final Mortgage current_mortgage = mortgages.get(position);
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -91,9 +85,14 @@ public class MortFragment extends Fragment {
                 builder.setPositiveButton("EDIT", new DialogInterface.OnClickListener() {
 
                     public void onClick(DialogInterface dialog, int which) {
-                        // Do nothing but close the dialog
                         dialog.dismiss();
-
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        Bundle args = new Bundle();
+                        args.putSerializable("mortgage", current_mortgage);
+                        CalcFragment calcFragment = new CalcFragment();
+                        calcFragment.setArguments(args);
+                        ft.replace(R.id.tab,calcFragment);
+                        ft.commit();
                     }
                 });
 
@@ -101,8 +100,12 @@ public class MortFragment extends Fragment {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        // Do nothing
                         dialog.dismiss();
+                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        new MortgageDAO(getActivity()).deleteMortgage(current_mortgage);
+                        MortFragment mortFragment = new MortFragment();
+                        ft.replace(R.id.tab,mortFragment);
+                        ft.commit();
                     }
                 });
 
