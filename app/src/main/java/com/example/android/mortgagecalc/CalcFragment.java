@@ -128,7 +128,7 @@ public class CalcFragment extends Fragment {
         mStreet = (EditText)rootView.findViewById(R.id.street_value);
         mCity = (EditText) rootView.findViewById(R.id.city_value);
         mState = (Spinner) rootView.findViewById(R.id.state_spinner);
-        mState.setSelection(2);
+        mState.setSelection(0);
         mZip = (EditText) rootView.findViewById(R.id.zip_value);
         mHouseTypeGroup = (RadioGroup) rootView.findViewById(R.id.type_group);
 
@@ -144,6 +144,7 @@ public class CalcFragment extends Fragment {
             mState.setSelection(getIndex(mState, editMortgage.getState()));
             mHouseTypeGroup.check(editMortgage.getType());
             mResultTextView.setText(editMortgage.getInterest()+"");
+            mZip.setText(editMortgage.getZip()+"");
         }
 
 
