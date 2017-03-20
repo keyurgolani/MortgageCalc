@@ -73,11 +73,22 @@ public class MortFragment extends Fragment {
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
-                String msg = "\nType:"+"\t"+current_mortgage.getType() +
+                int type_number = current_mortgage.getType();
+                String current_mortgage_type= "";
+                if(type_number == 2131624081){
+                    current_mortgage_type = "House";
+
+                }else if(type_number == 2131624082){
+                    current_mortgage_type = "Town House";
+                }else if(type_number == 2131624083){
+                    current_mortgage_type = "Condo";
+                }
+
+                String msg = "\nType:"+"\t"+current_mortgage_type +
                         "\nStreet Address:"+"\t"+current_mortgage.getAddress() +
                         "\nCity:"+"\t"+current_mortgage.getCity() +
                         "\nLoan Amount:"+"\t"+(current_mortgage.getPrice()-current_mortgage.getDownpayment()) +
-                        "\nAPR:"+"\t"+current_mortgage.getInterest() +
+                        "\nAPR:"+"\t"+current_mortgage.getInterest()+"%" +
                         "\nMonthly Payment:"+"\t" + current_mortgage.getMortgageAmount();
 
 
