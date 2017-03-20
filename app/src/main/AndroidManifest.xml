@@ -20,7 +20,9 @@
             android:value="AIzaSyAD5nTMeBsTDOTyqADLFiv8P9jRenVaWbs"/>
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name">
+            android:label="@string/app_name"
+            android:screenOrientation="portrait">
+
 
 
 

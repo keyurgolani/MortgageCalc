@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
@@ -45,6 +46,20 @@ public class CalcFragment extends Fragment {
     RadioGroup mHouseTypeGroup;
     Mortgage editMortgage = null;
 
+    //private method of your class
+    private int getIndex(Spinner spinner, String myString)
+    {
+        int index = 0;
+
+        for (int i=0;i<spinner.getCount();i++){
+            if (spinner.getItemAtPosition(i).toString().equalsIgnoreCase(myString)){
+                index = i;
+                break;
+            }
+        }
+        return index;
+    }
+
     public void SaveMortgage() {
         if(editMortgage == null) {
             Mortgage mortgage = new Mortgage();
@@ -55,7 +70,10 @@ public class CalcFragment extends Fragment {
             mortgage.setAddress(mStreet.getText().toString());
             mortgage.setCity(mCity.getText().toString());
             mortgage.setState(mState.getSelectedItem().toString());
+
             mortgage.setType(mHouseTypeGroup.getCheckedRadioButtonId());
+            Log.w("The radio button id", ""+mHouseTypeGroup.getCheckedRadioButtonId());
+
             mortgage.setZip(Integer.parseInt(mZip.getText().toString()));
             mortgage.validate();
             if(mortgage.isValid()) {
@@ -110,6 +128,7 @@ public class CalcFragment extends Fragment {
         mStreet = (EditText)rootView.findViewById(R.id.street_value);
         mCity = (EditText) rootView.findViewById(R.id.city_value);
         mState = (Spinner) rootView.findViewById(R.id.state_spinner);
+        mState.setSelection(2);
         mZip = (EditText) rootView.findViewById(R.id.zip_value);
         mHouseTypeGroup = (RadioGroup) rootView.findViewById(R.id.type_group);
 
@@ -122,8 +141,7 @@ public class CalcFragment extends Fragment {
             mPeriodEditView.setText(editMortgage.getPeriod()+"");
             mStreet.setText(editMortgage.getAddress());
             mCity.setText(editMortgage.getCity()+"");
-//            mState.setSelection(Integer.parseInt(editMortgage.getState()));
-            mZip.setText(editMortgage.getZip()+"");
+            mState.setSelection(getIndex(mState, editMortgage.getState()));
             mHouseTypeGroup.check(editMortgage.getType());
             mResultTextView.setText(editMortgage.getInterest()+"");
         }
