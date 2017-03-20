@@ -108,7 +108,10 @@ public class CalcFragment extends Fragment {
             downPayment = Double.parseDouble(String.valueOf(mDownPaymentEditView.getText()));
             apr = Double.parseDouble(String.valueOf(mAPREditView.getText()));
             period = Double.parseDouble(String.valueOf(mPeriodEditView.getText()));
-            double mortgage = (price - downPayment) * (apr / 12) * Math.pow(1 + (apr / 12), (period * 12)) / (Math.pow(1 + (apr / 12), (period * 12)) - 1);
+            double mortgage = (price - downPayment)
+                    * (apr / 1200)
+                    * Math.pow(1 + (apr / 1200), (period * 12))
+                    / (Math.pow(1 + (apr / 1200), (period * 12)) - 1);
             mResultTextView.setText(String.format("$%.2f", mortgage));
         }
     }

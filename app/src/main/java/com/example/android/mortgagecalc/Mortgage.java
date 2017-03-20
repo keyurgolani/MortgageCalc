@@ -139,7 +139,10 @@ public class Mortgage implements Serializable {
     }
 
     public double getMortgageAmount() {
-        return (price - downpayment) * (interest / 12) * Math.pow(1 + (interest / 12), (period * 12) / (Math.pow(1 + (interest / 12), (period * 12)) - 1));
+        return (price - downpayment)
+                * (interest / 12)
+                * Math.pow(1 + (interest / 12), (period * 12))
+                / (Math.pow(1 + (interest / 12), (period * 12)) - 1);
     }
 
     public void validate() {
