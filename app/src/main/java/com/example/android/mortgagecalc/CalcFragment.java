@@ -218,6 +218,23 @@ public class CalcFragment extends Fragment {
             }
         });
 
+        mClearButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                editMortgage = null;
+                mPropertyPriceEditView.setText("");
+                mDownPaymentEditView.setText("");
+                mAPREditView.setText("");
+                mPeriodEditView.setText("");
+                mStreet.setText("");
+                mCity.setText("");
+                mState.setSelection(0);
+                mZip.setText("");
+                mHouseTypeGroup.check(0);
+                mResultTextView.setText("$0.00");
+            }
+        });
+
         mDetailsTab.setup();
 
         final GestureDetector gestureDetector;
