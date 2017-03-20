@@ -84,12 +84,12 @@ public class MortFragment extends Fragment {
                     current_mortgage_type = "Condo";
                 }
 
-                String msg = "\nType:"+"\t"+current_mortgage_type +
-                        "\nStreet Address:"+"\t"+current_mortgage.getAddress() +
-                        "\nCity:"+"\t"+current_mortgage.getCity() +
-                        "\nLoan Amount:"+"\t"+(current_mortgage.getPrice()-current_mortgage.getDownpayment()) +
-                        "\nAPR:"+"\t"+current_mortgage.getInterest()+"%" +
-                        "\nMonthly Payment:"+"\t" + current_mortgage.getMortgageAmount();
+                String msg = "\nType:"+current_mortgage_type +
+                        "\nStreet Address:"+current_mortgage.getAddress() +
+                        "\nCity:"+current_mortgage.getCity() +
+                        "\nLoan Amount:"+"$"+(current_mortgage.getPrice()-current_mortgage.getDownpayment()) +
+                        "\nAPR:"+current_mortgage.getInterest()+"%" +
+                        "\nMonthly Payment:"+ String.format("$%.2f", current_mortgage.getMortgageAmount());
 
 
                 builder.setTitle("Mortgage Details");

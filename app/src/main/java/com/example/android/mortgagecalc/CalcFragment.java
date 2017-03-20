@@ -146,7 +146,7 @@ public class CalcFragment extends Fragment {
             mCity.setText(editMortgage.getCity()+"");
             mState.setSelection(getIndex(mState, editMortgage.getState()));
             mHouseTypeGroup.check(editMortgage.getType());
-            mResultTextView.setText(editMortgage.getInterest()+"");
+            mResultTextView.setText(String.format("$%.2f", editMortgage.getMortgageAmount()));
             mZip.setText(editMortgage.getZip()+"");
         }
 
