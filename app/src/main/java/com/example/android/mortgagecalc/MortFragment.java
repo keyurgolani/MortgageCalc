@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -114,7 +115,7 @@ public class MortFragment extends Fragment {
                         dialog.dismiss();
                         MainActivity activity = (MainActivity)getActivity();
                         new MortgageDAO(getActivity()).deleteMortgage(current_mortgage);
-                        activity.setFragment(activity.MORT_FRAGMENT);
+                        activity.setFragment(activity.MORT_FRAGMENT, new MortFragment());
                     }
                 });
 
@@ -141,18 +142,21 @@ public class MortFragment extends Fragment {
             public void onMapReady(GoogleMap mMap) {
                 googleMap = mMap;
 
-                // For showing a move to my location button
-                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    // TODO: Consider calling
-                    //    ActivityCompat#requestPermissions
-                    // here to request the missing permissions, and then overriding
-                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                    //                                          int[] grantResults)
-                    // to handle the case where the user grants the permission. See the documentation
-                    // for ActivityCompat#requestPermissions for more details.
-                    return;
+                for(Mortgage mortgage: mortgages) {
+                    Marker m = googleMap
+                            .addMarker(new MarkerOptions()
+                                    .position(new LatLng(mortgage.getLatitude(),
+                                            mortgage.getLongitude()))
+                                    .title(mortgage.getAddress()
+                                            + " "
+                                            + mortgage.getCity()
+                                            + " "
+                                            + mortgage.getState()
+                                            + " "
+                                            + mortgage.getZip())
+                                    .snippet(mortgage.getMortgageAmount()+""));
+                    m.setTag(mortgage);
                 }
-                googleMap.setMyLocationEnabled(true);
 
                 googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
                     @Override
@@ -203,7 +207,7 @@ public class MortFragment extends Fragment {
                                 dialog.dismiss();
                                 MainActivity activity = (MainActivity)getActivity();
                                 new MortgageDAO(getActivity()).deleteMortgage(current_mortgage);
-                                activity.setFragment(activity.MORT_FRAGMENT);
+                                activity.setFragment(activity.MORT_FRAGMENT, new MortFragment());
                             }
                         });
 
@@ -212,21 +216,20 @@ public class MortFragment extends Fragment {
                         return true;
                     }
                 });
-                for(Mortgage mortgage: mortgages) {
-                    Marker m = googleMap
-                            .addMarker(new MarkerOptions()
-                                    .position(new LatLng(mortgage.getLatitude(),
-                                            mortgage.getLongitude()))
-                                    .title(mortgage.getAddress()
-                                            + " "
-                                            + mortgage.getCity()
-                                            + " "
-                                            + mortgage.getState()
-                                            + " "
-                                            + mortgage.getZip())
-                                    .snippet(mortgage.getMortgageAmount()+""));
-                    m.setTag(mortgage);
+
+                // For showing a move to my location button
+                if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
                 }
+
+                googleMap.setMyLocationEnabled(true);
 
                 // For zooming automatically to the location of the marker
                 CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(mortgages.get(0).getLatitude(), mortgages.get(0).getLongitude())).zoom(12).build();

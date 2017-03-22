@@ -1,10 +1,12 @@
 package com.example.android.mortgagecalc;
 
 import android.app.Fragment;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -19,6 +21,16 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.utility.MyGestureDetector;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 import me.grantland.widget.AutofitHelper;
 
@@ -109,48 +121,12 @@ public class CalcFragment extends Fragment {
                         .show();
             }
         } else {
-            if(editMortgage == null) {
-                Mortgage mortgage = new Mortgage();
-                mortgage.setInterest(Double.parseDouble(mAPREditView.getText().toString()));
-                mortgage.setDownpayment(Double.parseDouble(mDownPaymentEditView.getText().toString()));
-                mortgage.setPeriod(Integer.parseInt(mPeriodEditView.getText().toString()));
-                mortgage.setPrice(Double.parseDouble(mPropertyPriceEditView.getText().toString()));
-                mortgage.setAddress(mStreetEditView.getText().toString());
-                mortgage.setCity(mCityEditView.getText().toString());
-                mortgage.setState(mStateSpinner.getSelectedItem().toString());
-
-                mortgage.setType(mHouseTypeGroup.getCheckedRadioButtonId());
-
-                mortgage.setZip(Integer.parseInt(mZipEditView.getText().toString()));
-                mortgage.validate();
-                if(mortgage.isValid()) {
-                    new MortgageDAO(this.getActivity()).createMortgage(mortgage);
-                } else {
-                    Toast.makeText(getActivity().getApplicationContext(),
-                            "Please make sure to provide valid address!", Toast.LENGTH_LONG)
-                            .show();
-                }
-            } else {
-                editMortgage.validate();
-                editMortgage.setInterest(Double.parseDouble(mAPREditView.getText().toString()));
-                editMortgage.setDownpayment(Double.parseDouble(mDownPaymentEditView.getText().toString()));
-                editMortgage.setPeriod(Integer.parseInt(mPeriodEditView.getText().toString()));
-                editMortgage.setPrice(Double.parseDouble(mPropertyPriceEditView.getText().toString()));
-                editMortgage.setAddress(mStreetEditView.getText().toString());
-                editMortgage.setCity(mCityEditView.getText().toString());
-                editMortgage.setState(mStateSpinner.getSelectedItem().toString());
-
-                editMortgage.setType(mHouseTypeGroup.getCheckedRadioButtonId());
-
-                editMortgage.setZip(Integer.parseInt(mZipEditView.getText().toString()));
-                if(editMortgage.isValid()) {
-                    new MortgageDAO(this.getActivity()).updateMortgage(editMortgage);
-                } else {
-                    Toast.makeText(getActivity().getApplicationContext(),
-                            "Please make sure to provide valid address!", Toast.LENGTH_LONG)
-                            .show();
-                }
-            }
+            String restURL = "http://maps.googleapis.com/maps/api/geocode/json?address="
+                    + mStreetEditView.getText().toString() + " "
+                    + mCityEditView.getText().toString() + " "
+                    + mStateSpinner.getSelectedItem().toString() + " "
+                    + mZipEditView.getText().toString();
+            new ValidateLocation().execute(restURL);
         }
     }
 
@@ -353,6 +329,99 @@ public class CalcFragment extends Fragment {
         });
 
         return rootView;
+    }
+
+    class ValidateLocation extends AsyncTask<String, Void, String[]> {
+        @Override
+        protected String[] doInBackground(String... params) {
+            String response = "";
+            String[] latlng = new String[2];
+            try {
+                URL url = new URL(params[0]);
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setRequestProperty("Accept", "application/json");
+                if (conn.getResponseCode() == 200) {
+                    BufferedReader br = new BufferedReader(new InputStreamReader(
+                            (conn.getInputStream())));
+                    String output;
+                    System.out.println("Output from Server .... \n");
+                    while ((output = br.readLine()) != null) {
+                        response += output;
+                    }
+                    conn.disconnect();
+                }
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            if(!response.equals("")) {
+                try {
+                    JSONObject responseObject = new JSONObject(response);
+                    latlng[0] = responseObject.getJSONArray("results")
+                            .getJSONObject(0)
+                            .getJSONObject("geometry")
+                            .getJSONObject("location")
+                            .getDouble("lat")+"";
+
+                    latlng[1] = responseObject.getJSONArray("results")
+                            .getJSONObject(0)
+                            .getJSONObject("geometry")
+                            .getJSONObject("location")
+                            .getDouble("lng")+"";
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return latlng;
+        }
+
+        @Override
+        protected void onPostExecute(String[] s) {
+            if(s[0] == null || s[0].equals("")
+                    || s[1] == null || s[1].equals("")) {
+                Toast.makeText(getActivity().getApplicationContext(),
+                        "Please make sure to provide valid address!", Toast.LENGTH_SHORT)
+                        .show();
+            } else if(Double.isNaN(Double.parseDouble(s[0]))
+                    || Double.isNaN(Double.parseDouble(s[1]))) {
+                Toast.makeText(getActivity().getApplicationContext(),
+                        "Please make sure to provide valid address!", Toast.LENGTH_SHORT)
+                        .show();
+            } else {
+                if(editMortgage == null) {
+                    Mortgage mortgage = new Mortgage();
+                    mortgage.setInterest(Double.parseDouble(mAPREditView.getText().toString()));
+                    mortgage.setDownpayment(Double.parseDouble(mDownPaymentEditView.getText().toString()));
+                    mortgage.setPeriod(Integer.parseInt(mPeriodEditView.getText().toString()));
+                    mortgage.setPrice(Double.parseDouble(mPropertyPriceEditView.getText().toString()));
+                    mortgage.setAddress(mStreetEditView.getText().toString());
+                    mortgage.setCity(mCityEditView.getText().toString());
+                    mortgage.setState(mStateSpinner.getSelectedItem().toString());
+                    mortgage.setType(mHouseTypeGroup.getCheckedRadioButtonId());
+                    mortgage.setZip(Integer.parseInt(mZipEditView.getText().toString()));
+                    mortgage.setLatitude(Double.parseDouble(s[0]));
+                    mortgage.setLongitude(Double.parseDouble(s[1]));
+                    new MortgageDAO(getActivity()).createMortgage(mortgage);
+                } else {
+                    editMortgage.setInterest(Double.parseDouble(mAPREditView.getText().toString()));
+                    editMortgage.setDownpayment(Double.parseDouble(mDownPaymentEditView.getText().toString()));
+                    editMortgage.setPeriod(Integer.parseInt(mPeriodEditView.getText().toString()));
+                    editMortgage.setPrice(Double.parseDouble(mPropertyPriceEditView.getText().toString()));
+                    editMortgage.setAddress(mStreetEditView.getText().toString());
+                    editMortgage.setCity(mCityEditView.getText().toString());
+                    editMortgage.setState(mStateSpinner.getSelectedItem().toString());
+                    editMortgage.setType(mHouseTypeGroup.getCheckedRadioButtonId());
+                    editMortgage.setZip(Integer.parseInt(mZipEditView.getText().toString()));
+                    editMortgage.setLatitude(Double.parseDouble(s[0]));
+                    editMortgage.setLongitude(Double.parseDouble(s[1]));
+                    new MortgageDAO(getActivity()).updateMortgage(editMortgage);
+                }
+                MainActivity activity = (MainActivity)getActivity();
+                activity.setFragment(activity.MORT_FRAGMENT);
+            }
+        }
     }
 
 

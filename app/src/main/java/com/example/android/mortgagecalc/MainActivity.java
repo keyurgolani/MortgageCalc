@@ -21,7 +21,6 @@ public class MainActivity extends AppCompatActivity {
     public static final int MORT_FRAGMENT = 1;
     FragmentManager fm;
     CalcFragment calcFragment = new CalcFragment();
-    MortFragment mortFragment = new MortFragment();
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -66,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
             ft.commit();
         } else if(fragment_id == MORT_FRAGMENT) {
             FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.tab, mortFragment, "active");
+            ft.replace(R.id.tab, new MortFragment(), "active");
             ft.commit();
         } else {
             FragmentTransaction ft = fm.beginTransaction();
@@ -82,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             ft.commit();
         } else if(fragment_id == MORT_FRAGMENT) {
             FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.tab, fragment, "active");
+            ft.replace(R.id.tab, new MortFragment(), "active");
             ft.commit();
         } else {
             FragmentTransaction ft = fm.beginTransaction();
