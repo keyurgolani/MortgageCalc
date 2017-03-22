@@ -31,6 +31,7 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 /**
@@ -51,10 +52,8 @@ public class MortFragment extends Fragment {
         mMortgageList = (ListView) rootView.findViewById(R.id.mortgage_list);
         final List<Mortgage> mortgages = new MortgageDAO(this.getActivity()).getAllMortgages();
         final List<String> mortgages_list = new ArrayList<>();
-        final List<Long> mortgages_id_list = new ArrayList<>();
         for (int i = 0; i < mortgages.size(); i++) {
             mortgages_list.add(mortgages.get(i).getAddress());
-
         }
         adapter = new ArrayAdapter<String>(this.getActivity(),
                 android.R.layout.simple_list_item_1,
@@ -158,12 +157,85 @@ public class MortFragment extends Fragment {
                 }
                 googleMap.setMyLocationEnabled(true);
 
-                // For dropping a marker at a point on the Map
-                LatLng sydney = new LatLng(-34, 151);
-                googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker Title").snippet("Marker Description"));
+                googleMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
+                    @Override
+                    public boolean onMarkerClick(Marker marker) {
+                        final Mortgage current_mortgage = (Mortgage) marker.getTag();
+
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+                        int type_number = current_mortgage.getType();
+                        String current_mortgage_type= "";
+                        if(type_number == 2131624081){
+                            current_mortgage_type = "House";
+
+                        }else if(type_number == 2131624082){
+                            current_mortgage_type = "Town House";
+                        }else if(type_number == 2131624083){
+                            current_mortgage_type = "Condo";
+                        }
+
+                        String msg = "\nType:"+current_mortgage_type +
+                                "\nStreet Address:"+current_mortgage.getAddress() +
+                                "\nCity:"+current_mortgage.getCity() +
+                                "\nLoan Amount:"+"$"+(current_mortgage.getPrice()-current_mortgage.getDownpayment()) +
+                                "\nAPR:"+current_mortgage.getInterest()+"%" +
+                                "\nMonthly Payment:"+ String.format("$%.2f", current_mortgage.getMortgageAmount());
+
+
+                        builder.setTitle("Mortgage Details");
+                        builder.setMessage(msg);
+
+                        builder.setPositiveButton("EDIT", new DialogInterface.OnClickListener() {
+
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                                Bundle args = new Bundle();
+                                args.putSerializable("mortgage", current_mortgage);
+                                CalcFragment calcFragment = new CalcFragment();
+                                calcFragment.setArguments(args);
+                                ft.replace(R.id.tab,calcFragment);
+                                ft.commit();
+                            }
+                        });
+
+                        builder.setNegativeButton("DELETE", new DialogInterface.OnClickListener() {
+
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.dismiss();
+                                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                                new MortgageDAO(getActivity()).deleteMortgage(current_mortgage);
+                                MortFragment mortFragment = new MortFragment();
+                                ft.replace(R.id.tab,mortFragment);
+                                ft.commit();
+                            }
+                        });
+
+                        AlertDialog alert = builder.create();
+                        alert.show();
+                        return true;
+                    }
+                });
+                for(Mortgage mortgage: mortgages) {
+                    Marker m = googleMap
+                            .addMarker(new MarkerOptions()
+                                    .position(new LatLng(mortgage.getLatitude(),
+                                            mortgage.getLongitude()))
+                                    .title(mortgage.getAddress()
+                                            + " "
+                                            + mortgage.getCity()
+                                            + " "
+                                            + mortgage.getState()
+                                            + " "
+                                            + mortgage.getZip())
+                                    .snippet(mortgage.getMortgageAmount()+""));
+                    m.setTag(mortgage);
+                }
 
                 // For zooming automatically to the location of the marker
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(sydney).zoom(12).build();
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(new LatLng(mortgages.get(0).getLatitude(), mortgages.get(0).getLongitude())).zoom(12).build();
                 googleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
             }
         });
