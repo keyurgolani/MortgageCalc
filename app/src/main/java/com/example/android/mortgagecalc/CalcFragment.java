@@ -112,7 +112,13 @@ public class CalcFragment extends Fragment {
                     * (apr / 1200)
                     * Math.pow(1 + (apr / 1200), (period * 12))
                     / (Math.pow(1 + (apr / 1200), (period * 12)) - 1);
-            mResultTextView.setText(String.format("$%.2f", mortgage));
+            if(Double.isNaN(mortgage) || Double.isInfinite(mortgage)) {
+                mResultTextView.setText("∞");
+            } else {
+                mResultTextView.setText(String.format("$%.2f", mortgage));
+            }
+        } else {
+            mResultTextView.setText("$0.00");
         }
     }
 
@@ -146,7 +152,12 @@ public class CalcFragment extends Fragment {
             mCity.setText(editMortgage.getCity()+"");
             mState.setSelection(getIndex(mState, editMortgage.getState()));
             mHouseTypeGroup.check(editMortgage.getType());
-            mResultTextView.setText(String.format("$%.2f", editMortgage.getMortgageAmount()));
+            Double mortgage = editMortgage.getMortgageAmount();
+            if(Double.isNaN(mortgage) || Double.isInfinite(mortgage)) {
+                mResultTextView.setText("∞");
+            } else {
+                mResultTextView.setText(String.format("$%.2f", mortgage));
+            }
             mZip.setText(editMortgage.getZip()+"");
         }
 
