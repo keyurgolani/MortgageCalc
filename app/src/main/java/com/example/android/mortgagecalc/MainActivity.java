@@ -17,9 +17,11 @@ public class MainActivity extends AppCompatActivity {
 
     private FrameLayout mCalcFrame;
     private FrameLayout mMyMortFrame;
-    private static final int CALC_FRAGMENT = -1;
-    private static final int MORT_FRAGMENT = 1;
+    public static final int CALC_FRAGMENT = -1;
+    public static final int MORT_FRAGMENT = 1;
     FragmentManager fm;
+    CalcFragment calcFragment = new CalcFragment();
+    MortFragment mortFragment = new MortFragment();
 
     private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
@@ -57,18 +59,34 @@ public class MainActivity extends AppCompatActivity {
         navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
     }
 
-    private void setFragment(int fragment_id) {
+    public void setFragment(int fragment_id) {
         if(fragment_id == CALC_FRAGMENT) {
             FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.tab, new CalcFragment(), "active");
+            ft.replace(R.id.tab, calcFragment, "active");
             ft.commit();
         } else if(fragment_id == MORT_FRAGMENT) {
             FragmentTransaction ft = fm.beginTransaction();
-            ft.replace(R.id.tab, new MortFragment(), "active");
+            ft.replace(R.id.tab, mortFragment, "active");
             ft.commit();
         } else {
             FragmentTransaction ft = fm.beginTransaction();
-            ft.add(R.id.tab, new CalcFragment(), "active");
+            ft.add(R.id.tab, calcFragment, "active");
+            ft.commit();
+        }
+    }
+
+    public void setFragment(int fragment_id, Fragment fragment) {
+        if(fragment_id == CALC_FRAGMENT) {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.tab, fragment, "active");
+            ft.commit();
+        } else if(fragment_id == MORT_FRAGMENT) {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.replace(R.id.tab, fragment, "active");
+            ft.commit();
+        } else {
+            FragmentTransaction ft = fm.beginTransaction();
+            ft.add(R.id.tab, fragment, "active");
             ft.commit();
         }
     }

@@ -5,16 +5,13 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.Spinner;
 import android.widget.TabHost;
@@ -39,10 +36,10 @@ public class CalcFragment extends Fragment {
     EditText mDownPaymentEditView;
     EditText mAPREditView;
     EditText mPeriodEditView;
-    EditText mStreet;
-    EditText mCity;
-    Spinner mState;
-    EditText mZip;
+    EditText mStreetEditView;
+    EditText mCityEditView;
+    Spinner mStateSpinner;
+    EditText mZipEditView;
     RadioGroup mHouseTypeGroup;
     Mortgage editMortgage = null;
 
@@ -61,36 +58,98 @@ public class CalcFragment extends Fragment {
     }
 
     public void SaveMortgage() {
-        if(editMortgage == null) {
-            Mortgage mortgage = new Mortgage();
-            mortgage.setInterest(Double.parseDouble(mAPREditView.getText().toString()));
-            mortgage.setDownpayment(Double.parseDouble(mDownPaymentEditView.getText().toString()));
-            mortgage.setPeriod(Integer.parseInt(mPeriodEditView.getText().toString()));
-            mortgage.setPrice(Double.parseDouble(mPropertyPriceEditView.getText().toString()));
-            mortgage.setAddress(mStreet.getText().toString());
-            mortgage.setCity(mCity.getText().toString());
-            mortgage.setState(mState.getSelectedItem().toString());
-
-            mortgage.setType(mHouseTypeGroup.getCheckedRadioButtonId());
-            Log.w("The radio button id", ""+mHouseTypeGroup.getCheckedRadioButtonId());
-
-            mortgage.setZip(Integer.parseInt(mZip.getText().toString()));
-            mortgage.validate();
-            if(mortgage.isValid()) {
-                new MortgageDAO(this.getActivity()).createMortgage(mortgage);
-            } else {
+        if(mPropertyPriceEditView.getText().toString().equals("") || mPropertyPriceEditView.getText().toString() == null
+                || mDownPaymentEditView.getText().toString().equals("") || mDownPaymentEditView.getText().toString() == null
+                || mAPREditView.getText().toString().equals("") || mAPREditView.getText().toString() == null
+                || mPeriodEditView.getText().toString().equals("") || mPeriodEditView.getText().toString() == null
+                || mStreetEditView.getText().toString().equals("") || mStreetEditView.getText().toString() == null
+                || mCityEditView.getText().toString().equals("") || mCityEditView.getText().toString() == null
+                || mZipEditView.getText().toString().equals("") || mZipEditView.getText().toString() == null) {
+            if(mPropertyPriceEditView.getText().toString().equals("") || mPropertyPriceEditView.getText().toString() == null) {
+                mDetailsTab.setCurrentTab(0);
+                mPropertyPriceEditView.requestFocus();
                 Toast.makeText(getActivity().getApplicationContext(),
-                        "Please make sure to provide valid address!", Toast.LENGTH_LONG)
+                        "Please fill Property Price", Toast.LENGTH_SHORT)
+                        .show();
+            } else if(mDownPaymentEditView.getText().toString().equals("") || mDownPaymentEditView.getText().toString() == null) {
+                mDetailsTab.setCurrentTab(0);
+                mDownPaymentEditView.requestFocus();
+                Toast.makeText(getActivity().getApplicationContext(),
+                        "Please fill Down Payment Amount", Toast.LENGTH_SHORT)
+                        .show();
+            } else if(mAPREditView.getText().toString().equals("") || mAPREditView.getText().toString() == null) {
+                mDetailsTab.setCurrentTab(0);
+                mAPREditView.requestFocus();
+                Toast.makeText(getActivity().getApplicationContext(),
+                        "Please fill Annual Percent Rate", Toast.LENGTH_SHORT)
+                        .show();
+            } else if(mPeriodEditView.getText().toString().equals("") || mPeriodEditView.getText().toString() == null) {
+                mDetailsTab.setCurrentTab(0);
+                mPeriodEditView.requestFocus();
+                Toast.makeText(getActivity().getApplicationContext(),
+                        "Please fill Loan Period", Toast.LENGTH_SHORT)
+                        .show();
+            } else if(mStreetEditView.getText().toString().equals("") || mStreetEditView.getText().toString() == null) {
+                mDetailsTab.setCurrentTab(1);
+                mStreetEditView.requestFocus();
+                Toast.makeText(getActivity().getApplicationContext(),
+                        "Please fill Street Address", Toast.LENGTH_SHORT)
+                        .show();
+            } else if(mCityEditView.getText().toString().equals("") || mCityEditView.getText().toString() == null) {
+                mDetailsTab.setCurrentTab(1);
+                mCityEditView.requestFocus();
+                Toast.makeText(getActivity().getApplicationContext(),
+                        "Please fill City", Toast.LENGTH_SHORT)
+                        .show();
+            } else if(mZipEditView.getText().toString().equals("") || mZipEditView.getText().toString() == null) {
+                mDetailsTab.setCurrentTab(1);
+                mZipEditView.requestFocus();
+                Toast.makeText(getActivity().getApplicationContext(),
+                        "Please fill Zip", Toast.LENGTH_SHORT)
                         .show();
             }
         } else {
-            editMortgage.validate();
-            if(editMortgage.isValid()) {
-                new MortgageDAO(this.getActivity()).updateMortgage(editMortgage);
+            if(editMortgage == null) {
+                Mortgage mortgage = new Mortgage();
+                mortgage.setInterest(Double.parseDouble(mAPREditView.getText().toString()));
+                mortgage.setDownpayment(Double.parseDouble(mDownPaymentEditView.getText().toString()));
+                mortgage.setPeriod(Integer.parseInt(mPeriodEditView.getText().toString()));
+                mortgage.setPrice(Double.parseDouble(mPropertyPriceEditView.getText().toString()));
+                mortgage.setAddress(mStreetEditView.getText().toString());
+                mortgage.setCity(mCityEditView.getText().toString());
+                mortgage.setState(mStateSpinner.getSelectedItem().toString());
+
+                mortgage.setType(mHouseTypeGroup.getCheckedRadioButtonId());
+
+                mortgage.setZip(Integer.parseInt(mZipEditView.getText().toString()));
+                mortgage.validate();
+                if(mortgage.isValid()) {
+                    new MortgageDAO(this.getActivity()).createMortgage(mortgage);
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            "Please make sure to provide valid address!", Toast.LENGTH_LONG)
+                            .show();
+                }
             } else {
-                Toast.makeText(getActivity().getApplicationContext(),
-                        "Please make sure to provide valid address!", Toast.LENGTH_LONG)
-                        .show();
+                editMortgage.validate();
+                editMortgage.setInterest(Double.parseDouble(mAPREditView.getText().toString()));
+                editMortgage.setDownpayment(Double.parseDouble(mDownPaymentEditView.getText().toString()));
+                editMortgage.setPeriod(Integer.parseInt(mPeriodEditView.getText().toString()));
+                editMortgage.setPrice(Double.parseDouble(mPropertyPriceEditView.getText().toString()));
+                editMortgage.setAddress(mStreetEditView.getText().toString());
+                editMortgage.setCity(mCityEditView.getText().toString());
+                editMortgage.setState(mStateSpinner.getSelectedItem().toString());
+
+                editMortgage.setType(mHouseTypeGroup.getCheckedRadioButtonId());
+
+                editMortgage.setZip(Integer.parseInt(mZipEditView.getText().toString()));
+                if(editMortgage.isValid()) {
+                    new MortgageDAO(this.getActivity()).updateMortgage(editMortgage);
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(),
+                            "Please make sure to provide valid address!", Toast.LENGTH_LONG)
+                            .show();
+                }
             }
         }
     }
@@ -134,11 +193,11 @@ public class CalcFragment extends Fragment {
         mDownPaymentEditView = (EditText) rootView.findViewById(R.id.downpayment_value);
         mAPREditView = (EditText) rootView.findViewById(R.id.apr_value);
         mPeriodEditView = (EditText) rootView.findViewById(R.id.period_value);
-        mStreet = (EditText)rootView.findViewById(R.id.street_value);
-        mCity = (EditText) rootView.findViewById(R.id.city_value);
-        mState = (Spinner) rootView.findViewById(R.id.state_spinner);
-        mState.setSelection(0);
-        mZip = (EditText) rootView.findViewById(R.id.zip_value);
+        mStreetEditView = (EditText)rootView.findViewById(R.id.street_value);
+        mCityEditView = (EditText) rootView.findViewById(R.id.city_value);
+        mStateSpinner = (Spinner) rootView.findViewById(R.id.state_spinner);
+        mStateSpinner.setSelection(0);
+        mZipEditView = (EditText) rootView.findViewById(R.id.zip_value);
         mHouseTypeGroup = (RadioGroup) rootView.findViewById(R.id.type_group);
 
         Bundle args = getArguments();
@@ -148,9 +207,9 @@ public class CalcFragment extends Fragment {
             mDownPaymentEditView.setText(editMortgage.getDownpayment()+"");
             mAPREditView.setText(editMortgage.getInterest()+"");
             mPeriodEditView.setText(editMortgage.getPeriod()+"");
-            mStreet.setText(editMortgage.getAddress());
-            mCity.setText(editMortgage.getCity()+"");
-            mState.setSelection(getIndex(mState, editMortgage.getState()));
+            mStreetEditView.setText(editMortgage.getAddress());
+            mCityEditView.setText(editMortgage.getCity()+"");
+            mStateSpinner.setSelection(getIndex(mStateSpinner, editMortgage.getState()));
             mHouseTypeGroup.check(editMortgage.getType());
             Double mortgage = editMortgage.getMortgageAmount();
             if(Double.isNaN(mortgage) || Double.isInfinite(mortgage)) {
@@ -158,7 +217,7 @@ public class CalcFragment extends Fragment {
             } else {
                 mResultTextView.setText(String.format("$%.2f", mortgage));
             }
-            mZip.setText(editMortgage.getZip()+"");
+            mZipEditView.setText(editMortgage.getZip()+"");
         }
 
 
@@ -259,10 +318,10 @@ public class CalcFragment extends Fragment {
                 mDownPaymentEditView.setText("");
                 mAPREditView.setText("");
                 mPeriodEditView.setText("");
-                mStreet.setText("");
-                mCity.setText("");
-                mState.setSelection(0);
-                mZip.setText("");
+                mStreetEditView.setText("");
+                mCityEditView.setText("");
+                mStateSpinner.setSelection(0);
+                mZipEditView.setText("");
                 mHouseTypeGroup.check(0);
                 mResultTextView.setText("$0.00");
             }

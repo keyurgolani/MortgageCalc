@@ -98,13 +98,12 @@ public class MortFragment extends Fragment {
 
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        MainActivity activity = (MainActivity)getActivity();
                         Bundle args = new Bundle();
                         args.putSerializable("mortgage", current_mortgage);
                         CalcFragment calcFragment = new CalcFragment();
                         calcFragment.setArguments(args);
-                        ft.replace(R.id.tab,calcFragment);
-                        ft.commit();
+                        activity.setFragment(activity.CALC_FRAGMENT, calcFragment);
                     }
                 });
 
@@ -113,11 +112,9 @@ public class MortFragment extends Fragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        FragmentTransaction ft = getFragmentManager().beginTransaction();
+                        MainActivity activity = (MainActivity)getActivity();
                         new MortgageDAO(getActivity()).deleteMortgage(current_mortgage);
-                        MortFragment mortFragment = new MortFragment();
-                        ft.replace(R.id.tab,mortFragment);
-                        ft.commit();
+                        activity.setFragment(activity.MORT_FRAGMENT);
                     }
                 });
 
@@ -190,13 +187,12 @@ public class MortFragment extends Fragment {
 
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                FragmentTransaction ft = getFragmentManager().beginTransaction();
                                 Bundle args = new Bundle();
                                 args.putSerializable("mortgage", current_mortgage);
                                 CalcFragment calcFragment = new CalcFragment();
                                 calcFragment.setArguments(args);
-                                ft.replace(R.id.tab,calcFragment);
-                                ft.commit();
+                                MainActivity activity = (MainActivity)getActivity();
+                                activity.setFragment(activity.CALC_FRAGMENT, calcFragment);
                             }
                         });
 
@@ -205,11 +201,9 @@ public class MortFragment extends Fragment {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
                                 dialog.dismiss();
-                                FragmentTransaction ft = getFragmentManager().beginTransaction();
+                                MainActivity activity = (MainActivity)getActivity();
                                 new MortgageDAO(getActivity()).deleteMortgage(current_mortgage);
-                                MortFragment mortFragment = new MortFragment();
-                                ft.replace(R.id.tab,mortFragment);
-                                ft.commit();
+                                activity.setFragment(activity.MORT_FRAGMENT);
                             }
                         });
 
